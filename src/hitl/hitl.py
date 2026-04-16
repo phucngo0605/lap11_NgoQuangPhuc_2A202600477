@@ -65,32 +65,41 @@ class ConfidenceRouter:
         Returns:
             RoutingDecision with routing action and metadata
         """
-        # TODO 12: Implement routing logic
-        #
         # 1. Check if action_type is in HIGH_RISK_ACTIONS
-        #    -> If yes: always escalate (action="escalate", priority="high",
-        #       requires_human=True, reason="High-risk action: {action_type}")
-        #
-        # 2. Check confidence thresholds:
-        #    - confidence >= 0.9:
-        #      action="auto_send", priority="low",
-        #      requires_human=False, reason="High confidence"
-        #
-        #    - 0.7 <= confidence < 0.9:
-        #      action="queue_review", priority="normal",
-        #      requires_human=True, reason="Medium confidence — needs review"
-        #
-        #    - confidence < 0.7:
-        #      action="escalate", priority="high",
-        #      requires_human=True, reason="Low confidence — escalating"
+        if action_type in HIGH_RISK_ACTIONS:
+            return RoutingDecision(
+                action="escalate",
+                confidence=confidence,
+                reason=f"High-risk action: {action_type}",
+                priority="high",
+                requires_human=True,
+            )
 
-        return RoutingDecision(
-            action="auto_send",
-            confidence=confidence,
-            reason="TODO: implement routing logic",
-            priority="low",
-            requires_human=False,
-        )  # TODO: Replace with implementation
+        # 2. Check confidence thresholds
+        if confidence >= self.HIGH_THRESHOLD:
+            return RoutingDecision(
+                action="auto_send",
+                confidence=confidence,
+                reason="High confidence",
+                priority="low",
+                requires_human=False,
+            )
+        elif confidence >= self.MEDIUM_THRESHOLD:
+            return RoutingDecision(
+                action="queue_review",
+                confidence=confidence,
+                reason="Medium confidence — needs review",
+                priority="normal",
+                requires_human=True,
+            )
+        else: # confidence < MEDIUM_THRESHOLD
+            return RoutingDecision(
+                action="escalate",
+                confidence=confidence,
+                reason="Low confidence — escalating",
+                priority="high",
+                requires_human=True,
+            )
 
 
 # ============================================================
@@ -109,27 +118,27 @@ class ConfidenceRouter:
 hitl_decision_points = [
     {
         "id": 1,
-        "name": "TODO: Name this decision point",
-        "trigger": "TODO: When does this trigger?",
-        "hitl_model": "TODO: human-in-the-loop / human-on-the-loop / human-as-tiebreaker",
-        "context_needed": "TODO: What does the reviewer need to see?",
-        "example": "TODO: Give a concrete example scenario",
+        "name": "Large Money Transfer Approval",
+        "trigger": "Agent proposes a `transfer_money` action where the amount exceeds a certain threshold (e.g., > $10,000 USD or 250,000,000 VND).",
+        "hitl_model": "human-in-the-loop",
+        "context_needed": "Full conversation history, user account details (masked), transfer amount, recipient details (masked), agent's confidence score, any risk flags raised by guardrails.",
+        "example": "User asks to transfer 500,000,000 VND to a new, unverified recipient. The agent prepares the transaction, but because the amount is large, it triggers HITL. A human agent must review and explicitly approve the transaction before it executes.",
     },
     {
         "id": 2,
-        "name": "TODO: Name this decision point",
-        "trigger": "TODO: When does this trigger?",
-        "hitl_model": "TODO: human-in-the-loop / human-on-the-loop / human-as-tiebreaker",
-        "context_needed": "TODO: What does the reviewer need to see?",
-        "example": "TODO: Give a concrete example scenario",
+        "name": "Ambiguous or Emotional User Input",
+        "trigger": "Sentiment analysis detects high negative emotion (e.g., anger, distress) or the user's intent is highly ambiguous after multiple clarification attempts.",
+        "hitl_model": "human-on-the-loop",
+        "context_needed": "Conversation history, user sentiment score, agent's last few responses, identified intent(s) and their confidence scores.",
+        "example": "A user types, 'This is a disaster, everything is wrong, fix it now!' The agent is unsure what 'it' refers to. Instead of guessing, it flags the conversation for a human to take over, who can empathize and de-escalate the situation more effectively.",
     },
     {
         "id": 3,
-        "name": "TODO: Name this decision point",
-        "trigger": "TODO: When does this trigger?",
-        "hitl_model": "TODO: human-in-the-loop / human-on-the-loop / human-as-tiebreaker",
-        "context_needed": "TODO: What does the reviewer need to see?",
-        "example": "TODO: Give a concrete example scenario",
+        "name": "Conflicting Information Tie-breaker",
+        "trigger": "The agent receives conflicting information from two different internal tools or knowledge bases, or the user disputes a fact provided by the agent.",
+        "hitl_model": "human-as-tiebreaker",
+        "context_needed": "The user's query, the conflicting data points from each source, the agent's proposed response before the conflict was detected, and the source of each piece of information.",
+        "example": "A user asks for the interest rate on a specific old loan product. The main database says 5%, but an archived document says 5.2%. The agent can't decide. It presents both findings to a human expert, who can investigate and provide the correct, definitive answer to the user.",
     },
 ]
 
