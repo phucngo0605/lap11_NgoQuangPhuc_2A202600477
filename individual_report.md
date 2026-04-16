@@ -1,4 +1,15 @@
-# Phần B: Báo cáo cá nhân - Ngo Quang Phuc
+### Phần B: Báo cáo cá nhân - Ngo Quang Phuc
+
+| # | Question | Points |
+|---|----------|--------|
+| 1 | **Layer analysis:** For each of the 7 attack prompts in Test 2, which safety layer caught it first? If multiple layers would have caught it, list all of them. Present as a table. | 10 |
+| 2 | **False positive analysis:** Did any safe queries from Test 1 get incorrectly blocked? If yes, why? If no, try making your guardrails stricter — at what point do false positives appear? What is the trade-off between security and usability? | 8 |
+| 3 | **Gap analysis:** Design 3 attack prompts that your current pipeline does NOT catch. For each, explain why it bypasses your layers, and propose what additional layer would catch it. | 10 |
+| 4 | **Production readiness:** If you were deploying this pipeline for a real bank with 10,000 users, what would you change? Consider: latency (how many LLM calls per request?), cost, monitoring at scale, and updating rules without redeploying. | 7 |
+| 5 | **Ethical reflection:** Is it possible to build a "perfectly safe" AI system? What are the limits of guardrails? When should a system refuse to answer vs. answer with a disclaimer? Give a concrete example. | 5 |
+| **Total** | | **40** |
+
+---
 
 ### 1. Phân tích các lớp bảo vệ (Layer Analysis)
 
