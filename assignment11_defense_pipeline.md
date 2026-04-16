@@ -70,14 +70,14 @@ User Input
 
 You must implement **at least 4 independent safety layers** plus audit/monitoring:
 
-| # | Component | What it does |
-|---|-----------|-------------|
-| 1 | **Rate Limiter** | Block users who send too many requests in a time window (sliding window, per-user) |
-| 2 | **Input Guardrails** | Detect prompt injection (regex) + block off-topic or dangerous requests. Can include NeMo Colang rules |
-| 3 | **Output Guardrails** | Filter PII/secrets from responses + redact sensitive data |
-| 4 | **LLM-as-Judge** | Use a separate LLM to evaluate responses on multiple criteria (safety, relevance, accuracy, tone) |
-| 5 | **Audit Log** | Record every interaction (input, output, which layer blocked, latency). Export to JSON |
-| 6 | **Monitoring & Alerts** | Track block rate, rate-limit hits, judge fail rate. Fire alerts when thresholds are exceeded |
+# | Component | What it does | Status (in Notebook) |
+|---|-----------|-------------|:---:|
+| 1 | **Rate Limiter** | Block users who send too many requests in a time window (sliding window, per-user) | ❌ Not Implemented |
+| 2 | **Input Guardrails** | Detect prompt injection (regex) + block off-topic or dangerous requests. Can include NeMo Colang rules | ✅ Implemented |
+| 3 | **Output Guardrails** | Filter PII/secrets from responses + redact sensitive data | ✅ Implemented |
+| 4 | **LLM-as-Judge** | Use a separate LLM to evaluate responses on multiple criteria (safety, relevance, accuracy, tone) | ✅ Implemented |
+| 5 | **Audit Log** | Record every interaction (input, output, which layer blocked, latency). Export to JSON | ❌ Not Implemented |
+| 6 | **Monitoring & Alerts** | Track block rate, rate-limit hits, judge fail rate. Fire alerts when thresholds are exceeded | ❌ Not Implemented |
 
 Each layer should catch something the others miss.
 
